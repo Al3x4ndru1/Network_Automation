@@ -2,3 +2,5 @@ venv/
 /scripts/__pycache__/
 /server/__pycache__/
 /a.py
+/b.py
+/scripts/service/a.py
