@@ -13,3 +13,5 @@ figlet "Cleaning"
 
 sudo 777 clean.sh
 sudo ./clean.sh
+
+python3 main.py
