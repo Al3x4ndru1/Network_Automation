@@ -1,6 +1,13 @@
 from flask import request, Blueprint, Response
 from .service.Create_topology.Random_nodes_service import random_nodes_service
-from .service.Create_topology.Create_topology import Create_Topology
+# from .service.Create_topology.Create_topology import Create_Topology
+from .service.Create_topology.Check_host_range import check_host_range
+from pprint import PrettyPrinter
+
+
+
+# pprint = PrettyPrinter(indent=1,)
+
 
 server = Blueprint('controller',__name__)
 
@@ -17,7 +24,7 @@ def random_nodes()->list:
                                 number_of_hosts_per_node=req["number_of_hosts_per_node"])
 
 
-@server.route('/random_fail_node',methods=['GET'])
+@server.route('/random_fail_node',methods=['POST'])
 def random_fail_node():
     
     if request.method=='POST':
@@ -25,9 +32,20 @@ def random_fail_node():
     
             req = request.json
             
-            if(req["controller_port"] is not None):
+            print(req["ipBase"],
+                                        req["controller_ip"],
+                                        req["controller_port"],
+                                        req["switches_name_prefix"],
+                                        req["hosts_name_prefix"],
+                                        req["number_of_switches"],
+                                        req["number_of_hosts"])
+            
+            if(req["controller_port"] != "default"):
+
                 
-                if (req["ipBase"],req["hosts_name"]):
+                if (check_host_range(req["ipBase"],
+                                     req["number_of_hosts"],
+                                     req["number_of_switches"])):
                     topology = Create_Topology(req["ipBase"],
                                             req["controller_ip"],
                                             req["controller_port"],
@@ -36,6 +54,14 @@ def random_fail_node():
                                             req["number_of_switches"],
                                             req["number_of_hosts"])
                     topology.create_topology()
+                    
+                    print(req["ipBase"],
+                                            req["controller_ip"],
+                                            req["controller_port"],
+                                            req["switches_name_prefix"],
+                                            req["hosts_name_prefix"],
+                                            req["number_of_switches"],
+                                            req["number_of_hosts"])
                 else:
                     return "Too many hosts the specified base Ip"
             else:
